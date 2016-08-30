@@ -10,7 +10,7 @@ MAINTAINER Ivan Krizsan, https://github.com/krizsan
 # Set this environment variable to true to set timezone on container start.
 ENV SET_CONTAINER_TIMEZONE false
 # Default container timezone as found under the directory /usr/share/zoneinfo/.
-ENV CONTAINER_TIMEZONE Europe/Stockholm
+ENV CONTAINER_TIMEZONE Asia/Tokyo
 # URL from which to download Elastalert.
 ENV ELASTALERT_URL https://github.com/Yelp/elastalert/archive/master.zip
 # Directory holding configuration for Elastalert and Supervisor.
@@ -28,7 +28,7 @@ ENV ELASTALERT_HOME /opt/${ELASTALERT_DIRECTORY_NAME}
 # Supervisor configuration file for Elastalert.
 ENV ELASTALERT_SUPERVISOR_CONF ${CONFIG_DIR}/elastalert_supervisord.conf
 # Alias, DNS or IP of Elasticsearch host to be queried by Elastalert. Set in default Elasticsearch configuration file.
-ENV ELASTICSEARCH_HOST elasticsearch_host
+ENV ELASTICSEARCH_HOST elasticsearch
 # Port on above Elasticsearch host. Set in default Elasticsearch configuration file.
 ENV ELASTICSEARCH_PORT 9200
 
@@ -40,11 +40,7 @@ COPY ./start-elastalert.sh /opt/
 # Install software required for Elastalert and NTP for time synchronization.
 RUN apk update && \
     apk upgrade && \
-    apk add python-dev gcc musl-dev tzdata openntpd && \
-# Install pip - required for installation of Elastalert.
-    wget https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py && \
+    apk add wget python-dev py-pip gcc musl-dev tzdata openntpd && \
 # Download and unpack Elastalert.
     wget ${ELASTALERT_URL} && \
     unzip *.zip && \
